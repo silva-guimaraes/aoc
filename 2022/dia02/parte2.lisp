@@ -1,0 +1,20 @@
+
+
+(defvar lose 1)
+(defvar draw 2)
+(defvar win 3)
+
+(print (loop for x in (loop for line in (uiop:read-file-lines "strategy_guide.txt")
+			    collect (cons (+ 1 (- (char-int (aref line 0))
+						  (char-int #\A) ))
+					  (+ 1 (- (char-int (aref line 2))
+						  (char-int #\X)))))
+	     for opponent = (car x)
+	     for you = (cdr x)
+	     for rotate = (+ opponent 1)
+	     for counter = (- opponent 1)
+	     if (= you draw)
+	       sum (+ 3 opponent)
+	     else if (= you win)
+		    sum (+ 6 (if (= rotate 4) 1 rotate))
+	     else sum (if (= counter 0) 3 counter)))
