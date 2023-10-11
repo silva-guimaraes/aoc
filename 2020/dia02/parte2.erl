@@ -11,10 +11,13 @@ parse(Line) ->
     {First, Second, Letter, Password}.
 
 valid({First, Second, Letter, Password}) ->
-    FirstLetter = lists:nth(First, Password),
-    SecondLetter = lists:nth(Second, Password),
-    not (FirstLetter == SecondLetter) and
-    ((FirstLetter == Letter) or (SecondLetter == Letter)).
+    A = lists:nth(First, Password) == Letter,
+    B = lists:nth(Second, Password) == Letter,
+    A xor B.
+    % FirstLetter = lists:nth(First, Password),
+    % SecondLetter = lists:nth(Second, Password),
+    % not (FirstLetter == SecondLetter) and
+    % ((FirstLetter == Letter) or (SecondLetter == Letter)).
 
 start() ->
     {ok, Binary} = file:read_file("input.txt"),
