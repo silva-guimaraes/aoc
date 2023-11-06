@@ -27,20 +27,18 @@ parse_input() ->
      end
      || X <- Lines].
 
+% eu podia jurar que a area não seria continua :(
+% merge_slices([A], Ret) -> [A | Ret];
 
-merge_slices([A], Ret) -> [A | Ret];
+% % -----a--------------a-----
+% % ---------b----b-----------
+% merge_slices([{A1, A2} = A, {B1, B2} |T], Ret) when (A1 =< B1) and (A2 >= B2) ->
+%     merge_slices([A | T], Ret);
 
-% -----a--------------a-----
-% ---------b----b-----------
-merge_slices([{A1, A2} = A, {B1, B2} |T], Ret) when (A1 =< B1) and (A2 >= B2) ->
-    erlang:display(A),
-    merge_slices([A | T], Ret);
-
-% -----a--------a----------
-% ---------b--------b------
-merge_slices([{A1, A2}, {B1, B2} |T], Ret) when (B1 >= A1) and (B1 =< A2) ->
-    % erlang:display({A1, B2}),
-    merge_slices([{A1, B2} | T], Ret).
+% % -----a--------a----------
+% % ---------b--------b------
+% merge_slices([{A1, A2}, {B1, B2} |T], Ret) when (B1 >= A1) and (B1 =< A2) ->
+%     merge_slices([{A1, B2} | T], Ret).
 
 % % --a--------a------------------
 % % -----------------b--------b---
@@ -48,13 +46,13 @@ merge_slices([{A1, A2}, {B1, B2} |T], Ret) when (B1 >= A1) and (B1 =< A2) ->
 %     % erlang:display(H),
 %     merge_slices([T], [H|Ret]).
 
-merge_slices(Slices) ->
-    merge_slices(Slices, []).
+% merge_slices(Slices) ->
+%     merge_slices(Slices, []).
 
 
 start() ->
     Y = 2000000 ,
-    % Y = 10 ,
+    % Y = 10 , % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     Sensors = parse_input(),
     Slices = [
                  begin
@@ -72,6 +70,9 @@ start() ->
                     erlang:abs(SensorY - Y) =< Distance
                 ],
     Sorted = lists:usort(fun({A, _}, {B, _}) -> A < B end, Slices),
-    erlang:display(Sorted),
-    [{A, B}] = merge_slices(Sorted),
+    % erlang:display(Sorted),
+    [{A, _} | _] = Sorted,
+    {_, B} = lists:last(Sorted),
+
+    % [{A, B}] = merge_slices(Sorted),
     erlang:display(erlang:abs(A) + B) .
