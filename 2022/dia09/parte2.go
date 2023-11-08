@@ -1,11 +1,12 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
-	"regexp"
-	"strconv"
+    "bufio"
+    "fmt"
+    "os"
+    "regexp"
+    "strconv"
+    "math"
 )
 
 type step struct {
@@ -22,58 +23,46 @@ const (
     y = 1
 )
 
-func simulate_knot(head_visited [][]int) [][]int {
 
-    tail := []int{0, 0}
-
-    var knot_visited [][]int
-    knot_visited = append(knot_visited, []int{tail[x], tail[y]})
-
+func simulate_knot(head_visited []pos) []pos {
+    var tail_visited []pos
+    tail := pos{0, 0}
     for i := range head_visited {
 
-	dx := head_visited[i][x] - tail[x]
-	dy := head_visited[i][y] - tail[y]
+        dx := head_visited[i].x - tail.x
+        dy := head_visited[i].y - tail.y
+        d := int(math.Abs(float64(dx)) + math.Abs(float64(dy)))
 
-	// movimentos verticais/horizontais
-	if (dx == 0 && (dy < -1 || dy > 1)) || (dy == 0 && (dx < -1 || dx > 1)) {
-	    tail[x] = head_visited[i - 1][x]
-	    tail[y] = head_visited[i - 1][y]
+        if d == 2 {
+            if dx >  1 { tail.x++; }
+            if dy >  1 { tail.y++; }
+            if dx < -1 { tail.x--; }
+            if dy < -1 { tail.y--; }
+        } else if d > 2 {
+            if dx > 0 { tail.x++; }
+            if dy > 0 { tail.y++; }
+            if dx < 0 { tail.x--; }
+            if dy < 0 { tail.y--; }
+        } 
 
-
-	} else if (dx < -1 || dx > 1) || (dy < -1 || dy > 1) {
-
-	    // mover na diagonal quando o nó seguinte mover na diagonal. é isso o que o desafio quer.
-	    nx := dx
-	    if nx > 1 { nx-- }
-	    if nx < -1 { nx++ }
-
-	    ny := dy
-	    if ny > 1 { ny-- }
-	    if ny < -1 { ny++ }
-
-	    tail[x] += nx
-	    tail[y] += ny
-	}
-
-	knot_visited = append(knot_visited, []int{tail[x], tail[y]})
+        tail_visited = append(tail_visited, tail)
     }
-
-    return knot_visited
+    return tail_visited
 }
 
 
-func is_unique(list [][]int, yy, xx int) bool {
+func is_unique(list []pos, yy, xx int) bool {
     for i := range list {
-	if list[i][y] == yy && list[i][x] == xx {
-	    return false
-	}
+        if list[i].y == yy && list[i].x == xx {
+            return false
+        }
     }
     return true
 
 }
 
 func main() {
-    file, err := os.Open("./teste2.txt")
+    file, err := os.Open("./rope.txt")
     if err != nil {
         panic(err)
     }
@@ -84,7 +73,7 @@ func main() {
     // ler linhas como strings
     var lines []string
     for scanner.Scan() {
-	lines = append(lines, scanner.Text())
+        lines = append(lines, scanner.Text())
     }
     file.Close()
 
@@ -93,85 +82,55 @@ func main() {
     r, _ := regexp.Compile("\\d+")
     var steps []step
     for i := range lines {
-	times, _ := strconv.Atoi(r.FindString(lines[i]))
-	steps = append(steps, step{string(lines[i][0]), times})
+        times, _ := strconv.Atoi(r.FindString(lines[i]))
+        steps = append(steps, step{string(lines[i][0]), times})
     }
 
-    head := []int{0, 0}
+    tail := pos{0, 0}
+    head := pos{0, 0}
 
     unique_visits := make(map[pos]int)
-    var head_visited [][]int
+    var head_visited []pos
+    var tail_visited []pos
 
-    head_visited = append(head_visited, []int{head[y], head[x]})
-    // unique_visits[pos{tail[x], tail[y]}]++
+    head_visited = append(head_visited, head)
+    tail_visited = append(tail_visited, tail)
+    // unique_visits[pos{tail.x, tail.y}]++
 
     // calcular todos os movimentos de head primeiro
     for i := range steps {
-	for j := 0; j < steps[i].times; j++ {
+        for j := 0; j < steps[i].times; j++ {
 
-	    // mover head de acordo com as direções
-	    if steps[i].direction == "U" {
-		head[y] -= 1
+            // mover head de acordo com as direções
+            if steps[i].direction == "U" {
+                head.y -= 1
 
-	    } else if steps[i].direction == "D" {
-		head[y] += 1
+            } else if steps[i].direction == "D" {
+                head.y += 1
 
-	    } else if steps[i].direction == "L" {
-		head[x] -= 1
+            } else if steps[i].direction == "L" {
+                head.x -= 1
 
-	    } else if steps[i].direction == "R" {
-		head[x] += 1
-	    }
+            } else if steps[i].direction == "R" {
+                head.x += 1
+            }
 
-	    head_visited = append(head_visited, []int{head[y], head[x]})
-	}
+            // salvar posições
+            head_visited = append(head_visited, head)
+        }
     }
 
-    step := 9
-    tail_visited := head_visited
-
-    for i := 0; i < step; i++ {
-	tail_visited = simulate_knot(tail_visited[1:])
-	// fmt.Print(i + 1, " ")
-	// for j := range tail_visited {
-	//     fmt.Print(tail_visited[j], "\t\t")
-	// }
-	// fmt.Println()
+    // trata cada knot como um head e calcular o proximo tail.
+    // o tail logo em seguida vira um head e assim por diante
+    for i := 0; i < 9; i++ {
+        head_visited = simulate_knot(head_visited)
     }
 
-    // step := 10
-    // tail_visited := make([][][]int, step)
-    // tail_visited[0] = head_visited
+    tail_visited = head_visited
 
-    // for i := 0; i < step - 1; i++ {
-    //     tail_visited[i + 1] = simulate_knot(tail_visited[i])
-    // }
 
     for i := range tail_visited {
-        unique_visits[pos{tail_visited[i][x], tail_visited[i][y]}] += 1
-    }
-
-
-    debug := make([][]int, 30)
-    for i := range debug {
-        debug[i] = make([]int, 50)
-    }
-
-    for i := range tail_visited {
-        debug[tail_visited[i][x] + 18][tail_visited[i][y] + 28] = 9
-    }
-
-    for i := range debug {
-	for j := 0; j < len(debug[0]); j++{
-
-	    if debug[i][j] > 0 {
-		fmt.Print("#")
-
-	    } else {
-		fmt.Print(" ")
-	    }
-	}
-	fmt.Println()
+        unique_visits[tail_visited[i]] += 1
     }
 
     fmt.Println(len(unique_visits))
