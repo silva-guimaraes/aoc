@@ -13,12 +13,12 @@
 	      :test (lambda (x) 
 			(if (= 0 (mod x divisible)) true false))))
 
-; exemplo
-; (defvar monkeys (list
-; 		  (monkey-make '(79 98) #'(lambda (old) (* old 19)) 23 2 3)
-; 		  (monkey-make '(54 65 75 74) #'(lambda (old) (+ old 6)) 19 2 0)
-; 		  (monkey-make '(79 60 97) #'(lambda (old) (* old old)) 13 1 3)
-; 		  (monkey-make '(74) #'(lambda (old) (+ old 3)) 17 0 1) ))
+;; exemplo
+;; (defvar monkeys (list
+;;                   (monkey-make '(79 98) #'(lambda (old) (* old 19)) 23 2 3)
+;;                   (monkey-make '(54 65 75 74) #'(lambda (old) (+ old 6)) 19 2 0)
+;;                   (monkey-make '(79 60 97) #'(lambda (old) (* old old)) 13 1 3)
+;;                   (monkey-make '(74) #'(lambda (old) (+ old 3)) 17 0 1) ))
 
 (defvar monkeys (list  
 		  (monkey-make '(80) #'(lambda (old) (* old 5)) 2 4 3)
