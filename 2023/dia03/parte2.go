@@ -12,8 +12,9 @@ type pos struct {
 }
 
 type num struct {
-    pos []pos
+    // pos []pos
     num string
+    visited bool
 }
 
 func main() {
@@ -31,7 +32,8 @@ func main() {
     }
     file.Close()
 
-    var numbers []num
+    var numbers []*num
+    lookup := make(map[pos]int)
 
     for i := range lines {
         for j := 0; j < len(lines[i]); j++ {
@@ -41,14 +43,16 @@ func main() {
                 for k := j; k < len(lines[i]); k++ {
                     c = lines[i][k]
                     if c >= '0' && c <= '9'{
-                        n.pos = append(n.pos, pos{i, k})
+                        pos := pos{i, k}
+                        // n.pos = append(n.pos, pos)
                         n.num += string(c)
+                        lookup[pos] = len(numbers)
                         j++
                     } else {
                         break
                     }
                 }
-                numbers = append(numbers, n)
+                numbers = append(numbers, &n)
             }
         }
     }
@@ -59,25 +63,23 @@ func main() {
             if c != '*' {
                 continue
             }
-            numbers2 := make([]num, len(numbers))
-            copy(numbers2, numbers)
-            var parts []num
+            var parts []*num
             for i2 := i - 1; i2 <= i+1; i2++ {
                 for j2 := j - 1; j2 <= j+1; j2++ {
                     if i2 < 0 || i2 >= len(lines) || j2 < 0 || j2 >= len(lines[0]) {
                         continue
                     }
-                    p := pos{i2, j2}
-                    for k := 0; k < len(numbers2); k++ {
-                        for _, p2 := range numbers2[k].pos {
-                            if  p == p2 {
-                                parts = append(parts, numbers2[k])
-                                numbers2[k] = numbers2[len(numbers2)-1]
-                                numbers2 = numbers2[:len(numbers2)-1]
-                                break;
-                            }
-                        }
+                    p1 := pos{i2, j2}
+                    p2i, ok := lookup[p1]
+                    if !ok {
+                        continue
                     }
+                    p2 := numbers[p2i]
+                    if p2.visited {
+                        continue
+                    }
+                    p2.visited = true
+                    parts = append(parts, p2)
                 } 
             } 
             if len(parts) == 2 {
@@ -85,6 +87,9 @@ func main() {
                 num2, _ := strconv.Atoi(parts[1].num)
 
                 sum += num1 * num2
+            }
+            for _, p := range parts {
+                p.visited = false
             }
         }
     }
