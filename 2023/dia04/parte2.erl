@@ -4,19 +4,19 @@
 -module(parte2).
 -export([start/0]).
 
-parse_input(_, eof, List) -> List;
+parse_input(_, eof) -> [];
 
-parse_input(File, {ok, Line}, List) ->
+parse_input(File, {ok, Line}) ->
     [_, Game] = string:split(string:trim(Line), ": "),
     [_Win, _Yours] = string:split(Game, " | "),
     Win = string:tokens(_Win, " "),
     Yours = string:tokens(_Yours, " "),
 
-    parse_input(File, file:read_line(File), [{Win, Yours}|List]).
+    [{Win, Yours} | parse_input(File, file:read_line(File))].
 
 parse_input() ->
     {ok, File} = file:open("input.txt", [read]),
-    parse_input(File, file:read_line(File), []).
+    parse_input(File, file:read_line(File)).
 
 sumlist(B, [])  -> B;
 sumlist([], A)  -> A;
@@ -35,8 +35,4 @@ loop(Cards) ->
 
 start() ->
     Input = parse_input(),
-    loop(lists:reverse(Input)).
-
-
-
-
+    erlang:display(loop(Input)).
