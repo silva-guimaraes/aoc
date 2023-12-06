@@ -7,7 +7,7 @@ pair([Start, Range | T]) ->
     [{Start, Start + Range} | pair(T)].
 
 parse_input() ->
-    {ok, Binary} = file:read_file("teste.txt"),
+    {ok, Binary} = file:read_file("input.txt"),
     [_Seeds | Sections] = 
     string:split( string:trim( binary:bin_to_list(Binary)), "\n\n", all),
     Maps =
@@ -33,8 +33,12 @@ parse_input() ->
     {Seeds, Maps}.
 
 
+% pass(Seed, [Dest, Source, _] = Line) when Source > Seed ->
+%     erlang:display(Seed),
+%     erlang:display(Line);
 pass(Seed, [Dest, Source, _]) ->
     Dest + (Seed - Source).
+
 % find_range(Range, []) -> Range;
 %
 % find_range({Start, End}, [[_, Source, Range] = Line | _]) 
@@ -48,7 +52,7 @@ pass(Seed, [Dest, Source, _]) ->
 % find_range({Start, End}, [[_, Source, Range] = Line | _]) 
 %   when (Start < Source) and 
 %        (End >= Source) and (End < Source + Range) ->
-%     erlang:display("foo"),
+%     % erlang:display("foo"),
 %     [
 %      {pass(Start, Line), pass(Source, Line)}, 
 %      {pass(Source, Line), pass(End, Line)}
@@ -57,7 +61,7 @@ pass(Seed, [Dest, Source, _]) ->
 % find_range({Start, End}, [[_, Source, Range] = Line | _]) 
 %   when (Start >= Source) and (Start < Source + Range) and
 %        (End >= Source) and (End < Source + Range) ->
-%     {pass(Start, Line), pass(End, Line)};
+%     [{pass(Start, Line), pass(End, Line)}];
 %
 % find_range({Start, End}, [[_, Source, Range] = Line | _]) 
 %   when (Start < Source) and (End > Source + Range) ->
@@ -70,46 +74,53 @@ pass(Seed, [Dest, Source, _]) ->
 % find_range(Range, [_ | Lines]) ->
 %     find_range(Range, Lines).
 
-find_range(Range, []) -> Range;
+split_range(Range, []) -> [Range];
 
-find_range({Start, End}, [[_, Source, Range] = Line | _]) 
+split_range({Start, End}, [[_, Source, Range] | _]) 
   when (Source =< Start) and (Start < Source + Range) and
        (End >= Source + Range) ->
     [
-     {pass(Start, Line), pass(Source + Range, Line)}, 
-     {pass(Source + Range, Line), pass(End, Line)}
+     {Start, Source + Range - 1}, 
+     {Source + Range, End}
     ];
 
-find_range({Start, End}, [[_, Source, Range] = Line | _]) 
+split_range({Start, End}, [[_, Source, Range] | _]) 
   when (Start < Source) and 
        (End >= Source) and (End < Source + Range) ->
-    erlang:display("foo"),
+    % erlang:display("foo"),
     [
-     {pass(Start, Line), pass(Source, Line)}, 
-     {pass(Source, Line), pass(End, Line)}
+     {Start, Source - 1}, 
+     {Source, End}
     ];
 
-find_range({Start, End}, [[_, Source, Range] = Line | _]) 
+split_range({Start, End}, [[_, Source, Range] | _]) 
   when (Start >= Source) and (Start < Source + Range) and
        (End >= Source) and (End < Source + Range) ->
-    {pass(Start, Line), pass(End, Line)};
+    [{Start, End}];
 
-find_range({Start, End}, [[_, Source, Range] = Line | _]) 
+split_range({Start, End}, [[_, Source, Range] | _]) 
   when (Start < Source) and (End > Source + Range) ->
     [
-     {pass(Source, Line), pass(Source + End, Line)}, 
-     {pass(Start, Line), pass(Source, Line)},
-     {pass(Source + Range, Line), pass(End, Line)}
+     {Source, Source + End - 1}, 
+     {Start, Source - 1},
+     {Source + Range, End}
     ];
 
-find_range(Range, [_ | Lines]) ->
-    find_range(Range, Lines).
+split_range(Range, [_ | Lines]) ->
+    split_range(Range, Lines).
 
-% loop(Seeds, [Map | Maps]) ->
-%
-%     .
+loop(Seeds, []) -> Seeds;
+loop(Seeds, [Map | Maps]) ->
+    % erlang:display(Seeds),
+    A = lists:map(fun(X) -> split_range(X, Map) end, Seeds),
+    B = lists:flatten(A),
+    C = lists:map(fun(X) -> find_range(X, Map) end, B),
+    loop(lists:flatten(C), Maps).
 
 start() ->
     {Seeds, Maps } = parse_input(),
-    find_range(lists:nth(1, Seeds), lists:nth(1, Maps)).
+    Foo = loop(Seeds, Maps),
+    lists:min([ X || {X, _} <- Foo, X =/= 0]).
+    % lists:min().
+    % split_range(lists:nth(2, Seeds), lists:nth(1, Maps)).
     % .
