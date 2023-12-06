@@ -12,7 +12,7 @@ quad(B, C) ->
 
 start() ->
     io:format("parte 1:~n"),
-    erlang:display(quad(56717999, 334113513502430)),
-    io:format("parte 2:~n"),
     erlang:display(quad(56, 334) * quad(71, 1135) * 
-                   quad(79, 1350) * quad(99, 2430)).
+                   quad(79, 1350) * quad(99, 2430)),
+    io:format("parte 2:~n"),
+    erlang:display(quad(56717999, 334113513502430)).
