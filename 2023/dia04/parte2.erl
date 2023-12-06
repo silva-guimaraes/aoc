@@ -4,6 +4,10 @@
 -module(parte2).
 -export([start/0]).
 
+% https://adventofcode.com/2023/day/4
+
+% usa uma lista pra salvar o numero de scratch cards.
+
 parse_input(_, eof) -> [];
 
 parse_input(File, {ok, Line}) ->

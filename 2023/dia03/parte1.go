@@ -19,6 +19,9 @@ type num struct {
     visited bool
 }
 
+// não fiz em erlang como eu gostaria porque não sabia como usar arrays de duas 
+// dimensões em erlang
+
 func main() {
     file, err := os.Open("./input.txt")
     if err != nil {
@@ -37,6 +40,11 @@ func main() {
     var numbers []*num
     lookup := make(map[pos]int)
 
+    // ler e juntar todos os numeros
+    // antes de ler todo o problema por completo eu poderia jurar que os numeros
+    // só iriam de 0 até 9. fui besta
+    // lookup salva a posição de todos os digitos do numero em uma hash table apontando
+    // pra uma versão completa do numero
     for i := range lines {
         for j := 0; j < len(lines[i]); j++ {
             c := lines[i][j]
@@ -57,7 +65,6 @@ func main() {
                 numbers = append(numbers, &n)
             }
         }
-        // fmt.Print("\r", i+1, "/", len(lines))
     }
 
     sum := 0
@@ -92,7 +99,7 @@ func main() {
 
     return
 
-    // isso daqui salvou a minha pele
+    // isso daqui salvou a minha pele. 
 
     // cmd := exec.Command(
     //     "ffmpeg", 
