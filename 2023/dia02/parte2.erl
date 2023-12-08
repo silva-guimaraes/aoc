@@ -1,5 +1,3 @@
-
-
 -module(parte2).
 -export([start/0]).
 -record(game, 
@@ -34,7 +32,7 @@ parse_input(File, {ok, Line}, Games) ->
     parse_input(File, file:read_line(File), [Game | Games]).
 
 parse_input() ->
-    {ok, File} = file:open("bigboy.txt", [read]),
+    {ok, File} = file:open("input.txt", [read]),
     parse_input(File, file:read_line(File), []).
 
 start() ->
