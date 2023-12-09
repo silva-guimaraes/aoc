@@ -53,4 +53,4 @@ start() ->
     {LeftRight, Map} = parse_input(),
     Z = [ X || X = [_, _, $Z] <- maps:keys(Map)],
     [H|T] = [find_z(LeftRight, X, Map) || X <- Z],
-    lists:foldl(fun lcm/2, H, T).
+    erlang:display(lists:foldl(fun lcm/2, H, T)).
