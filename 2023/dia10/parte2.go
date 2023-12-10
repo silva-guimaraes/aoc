@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
     "slices"
+    "os/exec"
 )
 
 type pos struct {
@@ -175,9 +176,9 @@ func main() {
 
     for i := 0; i < len(innerTiles); i++ {
 
-        if lines[innerTiles[i].i][innerTiles[i].j] != '.' ||
-        innerTiles[i].i < 0 || innerTiles[i].i >= len(lines) ||
-        innerTiles[i].j < 0 || innerTiles[i].j >= len(lines[0]) {
+        if  innerTiles[i].i < 0 || innerTiles[i].i >= len(lines) ||
+        innerTiles[i].j < 0 || innerTiles[i].j >= len(lines[0]) ||
+        lines[innerTiles[i].i][innerTiles[i].j] != '.' {
             innerTiles[i] = innerTiles[len(innerTiles)-1]
             innerTiles = innerTiles[:len(innerTiles)-1]
             i--
@@ -193,12 +194,13 @@ func main() {
     for k := range fuckYouRob {
         bleed = append(bleed, k)
     }
+    // innerTiles = bleed
 
     for len(bleed) > 0 {
         a := bleed[0]
         bleed = bleed[1:]
 
-        if i := slices.Index(loop, a); i > -1 {
+        if lines[a.i][a.j] != '.' {
             continue
         }
 
@@ -216,7 +218,81 @@ func main() {
         innerTiles = append(innerTiles, a)
     }
     fmt.Println(len(innerTiles))
-    // fmt.Println(innerTiles)
-    // fmt.Println(sumj)
+
+
+    cmd := exec.Command(
+        "ffmpeg", 
+        "-hide_banner",
+        "-y",
+        "-f", "rawvideo",
+        "-pix_fmt", "rgba",
+        "-s", fmt.Sprintf("%dx%d", len(lines[0]), len(lines)),
+        // "-r", fmt.Sprint(FPS),
+        // "-an",
+        "-i", "-", 
+        // "-vf", "scale=400:-1",
+        // "-c:v", "libx264",
+        "foobar.bmp",
+    )
+    cmd.Stdout = os.Stdout
+    cmd.Stderr = os.Stderr
+
+    stdin, err := cmd.StdinPipe()
+    if err != nil {
+        panic(err)
+    }
+
+    writer := bufio.NewWriter(stdin)
+
+    fmt.Println(cmd.String())
+    cmd.Start()
+
+    buf := make([]byte, len(lines) * len(lines[0]) * 4)
+
+    for i := range lines {
+        for j, c := range lines[i] {
+            off := i*len(lines[0])*4 + j*4
+            buf[off + 3] = 255
+            if c == '.' {
+                buf[off + 0] = 0
+                buf[off + 1] = 0
+                buf[off + 2] = 0
+                buf[off + 3] = 0
+            } else {
+                buf[off + 0] = 0
+                buf[off + 1] = 0
+                buf[off + 2] = 100
+            }
+        }
+    }
+    for _, p := range loop {
+        off := p.i*len(lines[0])*4 + p.j*4
+
+        buf[off + 0] = 255
+        buf[off + 1] = 0
+        buf[off + 2] = 0
+
+    }
+    for _, p := range innerTiles {
+        off := p.i*len(lines[0])*4 + p.j*4
+
+        buf[off + 0] = 0
+        buf[off + 1] = 255
+        buf[off + 2] = 0
+
+    }
+
+    nn, err := writer.Write(buf); 
+    fmt.Println(nn)
+    if err != nil {
+        panic(err)
+    }
+
+
+    stdin.Close()
+
+    if cmd.Wait() != nil {
+        panic(err)
+    }
 
 }
