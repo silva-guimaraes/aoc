@@ -26,6 +26,8 @@ type connections []pos
 
 func main() {
     file, err := os.Open("./input.txt")
+    // sumj := -1
+    sumj := 1
     if err != nil {
         panic(err)
     }
@@ -149,14 +151,13 @@ func main() {
 
     loop = loop[:len(loop)-1]
 
-    // sumi, sumj := 0, 0
-    // for i := 0; i < len(directions) - 1; i++ {
-    //     sumi += directions[i].i
-    //     sumj += directions[i].j
-    // }
+    // fmt.Println()
+    // fmt.Println()
+
+    // return
+
     // sumj == 1 esquerda -1 == direita
-    sumj := 1
-    // sumj := -1
+    // sumj := loop[len(loop)-1].j - loop[0].j
 
     var innerTiles []pos
 
@@ -177,6 +178,9 @@ func main() {
             panic(directions[i])
         }
 
+        if i := slices.Index(loop, p); i > -1 {
+            continue
+        }
         innerTiles = append(innerTiles, p)
     }
 
@@ -208,7 +212,6 @@ func main() {
             continue
         }
 
-
         bleed = append(bleed, pos{a.i+1, a.j})
         bleed = append(bleed, pos{a.i, a.j+1})
         bleed = append(bleed, pos{a.i-1, a.j})
@@ -218,7 +221,7 @@ func main() {
     }
     fmt.Println(len(innerTiles))
 
-    return
+    // return
 
 
     cmd := exec.Command(
@@ -263,38 +266,38 @@ func main() {
     for _, p := range loop {
         off := p.i*len(lines[0])*4 + p.j*4
 
-        buf[off + 0] = 0
-        buf[off + 1] = 255
-        buf[off + 2] = 0
-
-
-        // switch lines[p.i][p.j] {
-        // case 'F':
-        // buf[off + 0] = 255
-        // buf[off + 1] = 100
+        // buf[off + 0] = 0
+        // buf[off + 1] = 255
         // buf[off + 2] = 0
-        // case 'J':
-        // buf[off + 0] = 100
-        // buf[off + 1] = 255
-        // buf[off + 2] = 100
-        // case 'L':
-        // buf[off + 0] = 100
-        // buf[off + 1] = 100
-        // buf[off + 2] = 255
-        // case '7':
-        // buf[off + 0] = 255
-        // buf[off + 1] = 100
-        // buf[off + 2] = 255
-        // case '|':
-        // buf[off + 0] = 255
-        // buf[off + 1] = 255
-        // buf[off + 2] = 100
-        // case '-':
-        // buf[off + 0] = 100
-        // buf[off + 1] = 255
-        // buf[off + 2] = 255
-        //
-        // }
+
+
+        switch lines[p.i][p.j] {
+        case 'F':
+        buf[off + 0] = 255
+        buf[off + 1] = 100
+        buf[off + 2] = 0
+        case 'J':
+        buf[off + 0] = 100
+        buf[off + 1] = 255
+        buf[off + 2] = 100
+        case 'L':
+        buf[off + 0] = 100
+        buf[off + 1] = 100
+        buf[off + 2] = 255
+        case '7':
+        buf[off + 0] = 255
+        buf[off + 1] = 100
+        buf[off + 2] = 255
+        case '|':
+        buf[off + 0] = 255
+        buf[off + 1] = 255
+        buf[off + 2] = 100
+        case '-':
+        buf[off + 0] = 100
+        buf[off + 1] = 255
+        buf[off + 2] = 255
+
+        }
 
     }
     for _, p := range innerTiles {
