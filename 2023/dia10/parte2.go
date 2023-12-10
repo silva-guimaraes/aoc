@@ -22,8 +22,9 @@ type path struct {
 type connections []pos
 
 
+
 func main() {
-    file, err := os.Open("./teste2.txt")
+    file, err := os.Open("./input.txt")
     if err != nil {
         panic(err)
     }
@@ -100,10 +101,7 @@ func main() {
 
         for _, b := range visited {
             if a.current == b {
-                fmt.Println(a.number)
-                // far = a.current
                 goto end
-                // return
             }
 
         }
@@ -157,22 +155,68 @@ func main() {
     }
     // sumj == 1 esquerda -1 == direita
 
-    fmt.Println(loop)
-    fmt.Println(directions)
-    fmt.Println(sumi, sumj)
-    fmt.Println(len(loop), len(directions))
-
     var innerTiles []pos
+    sumj = -sumj
 
     for i := range loop {
         switch directions[i] {
-        case pos{-1,  0}:
-            innerTiles = append(innerTiles, pos{loop[i].i, loop[i].j + sumj})
         case pos{ 1,  0}:
+            innerTiles = append(innerTiles, pos{loop[i].i, loop[i].j + sumj})
+        case pos{-1,  0}:
+            innerTiles = append(innerTiles, pos{loop[i].i, loop[i].j - sumj})
         case pos{ 0, -1}:
+            innerTiles = append(innerTiles, pos{loop[i].i + sumj, loop[i].j})
         case pos{ 0,  1}:
+            innerTiles = append(innerTiles, pos{loop[i].i - sumj, loop[i].j})
         default:
             panic(directions[i])
         }
     }
+
+    for i := 0; i < len(innerTiles); i++ {
+
+        if lines[innerTiles[i].i][innerTiles[i].j] != '.' ||
+        innerTiles[i].i < 0 || innerTiles[i].i >= len(lines) ||
+        innerTiles[i].j < 0 || innerTiles[i].j >= len(lines[0]) {
+            innerTiles[i] = innerTiles[len(innerTiles)-1]
+            innerTiles = innerTiles[:len(innerTiles)-1]
+            i--
+        }
+    }
+    fuckYouRob := make(map[pos]byte)
+    for i := range innerTiles {
+        fuckYouRob[innerTiles[i]] = 0
+    }
+
+    innerTiles = []pos{}
+    var bleed []pos
+    for k := range fuckYouRob {
+        bleed = append(bleed, k)
+    }
+
+    for len(bleed) > 0 {
+        a := bleed[0]
+        bleed = bleed[1:]
+
+        if i := slices.Index(loop, a); i > -1 {
+            continue
+        }
+
+        if i := slices.Index(innerTiles, a); i > -1 {
+            continue
+        }
+
+        fmt.Println(a)
+
+        bleed = append(bleed, pos{a.i+1, a.j})
+        bleed = append(bleed, pos{a.i, a.j+1})
+        bleed = append(bleed, pos{a.i-1, a.j})
+        bleed = append(bleed, pos{a.i, a.j-1})
+
+        innerTiles = append(innerTiles, a)
+    }
+    fmt.Println(len(innerTiles))
+    // fmt.Println(innerTiles)
+    // fmt.Println(sumj)
+
 }
