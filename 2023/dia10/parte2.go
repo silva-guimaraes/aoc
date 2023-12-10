@@ -149,46 +149,42 @@ func main() {
 
     loop = loop[:len(loop)-1]
 
-    sumi, sumj := 0, 0
-    for i := 0; i < len(directions) - 1; i++ {
-        sumi += directions[i].i
-        sumj += directions[i].j
-    }
+    // sumi, sumj := 0, 0
+    // for i := 0; i < len(directions) - 1; i++ {
+    //     sumi += directions[i].i
+    //     sumj += directions[i].j
+    // }
     // sumj == 1 esquerda -1 == direita
+    sumj := 1
+    // sumj := -1
 
     var innerTiles []pos
-    sumj = -sumj
 
     for i := range loop {
+        // p1 := pos{67, 59}
+        var p pos
+
         switch directions[i] {
         case pos{ 1,  0}:
-            innerTiles = append(innerTiles, pos{loop[i].i, loop[i].j + sumj})
+            p = pos{loop[i].i, loop[i].j + sumj}
         case pos{-1,  0}:
-            innerTiles = append(innerTiles, pos{loop[i].i, loop[i].j - sumj})
+            p = pos{loop[i].i, loop[i].j - sumj}
         case pos{ 0, -1}:
-            innerTiles = append(innerTiles, pos{loop[i].i + sumj, loop[i].j})
+            p = pos{loop[i].i + sumj, loop[i].j}
         case pos{ 0,  1}:
-            innerTiles = append(innerTiles, pos{loop[i].i - sumj, loop[i].j})
+            p = pos{loop[i].i - sumj, loop[i].j}
         default:
             panic(directions[i])
         }
+
+        innerTiles = append(innerTiles, p)
     }
 
-    for i := 0; i < len(innerTiles); i++ {
-
-        if  innerTiles[i].i < 0 || innerTiles[i].i >= len(lines) ||
-        innerTiles[i].j < 0 || innerTiles[i].j >= len(lines[0]) ||
-        lines[innerTiles[i].i][innerTiles[i].j] != '.' {
-            innerTiles[i] = innerTiles[len(innerTiles)-1]
-            innerTiles = innerTiles[:len(innerTiles)-1]
-            i--
-        }
-    }
+    // gambiarra adiante!
     fuckYouRob := make(map[pos]byte)
     for i := range innerTiles {
         fuckYouRob[innerTiles[i]] = 0
-    }
-
+    } 
     innerTiles = []pos{}
     var bleed []pos
     for k := range fuckYouRob {
@@ -200,7 +196,11 @@ func main() {
         a := bleed[0]
         bleed = bleed[1:]
 
-        if lines[a.i][a.j] != '.' {
+        if  a.i < 0 || a.i >= len(lines) || a.j < 0 || a.j >= len(lines[0]) {
+            continue
+        }
+
+        if i := slices.Index(loop, a); i > -1 {
             continue
         }
 
@@ -208,7 +208,6 @@ func main() {
             continue
         }
 
-        fmt.Println(a)
 
         bleed = append(bleed, pos{a.i+1, a.j})
         bleed = append(bleed, pos{a.i, a.j+1})
@@ -218,6 +217,8 @@ func main() {
         innerTiles = append(innerTiles, a)
     }
     fmt.Println(len(innerTiles))
+
+    return
 
 
     cmd := exec.Command(
@@ -250,34 +251,57 @@ func main() {
     buf := make([]byte, len(lines) * len(lines[0]) * 4)
 
     for i := range lines {
-        for j, c := range lines[i] {
+        for j := range lines[i] {
             off := i*len(lines[0])*4 + j*4
+            // buf[off + 3] = 255
+            buf[off + 0] = 0
+            buf[off + 1] = 0
+            buf[off + 2] = 100
             buf[off + 3] = 255
-            if c == '.' {
-                buf[off + 0] = 0
-                buf[off + 1] = 0
-                buf[off + 2] = 0
-                buf[off + 3] = 0
-            } else {
-                buf[off + 0] = 0
-                buf[off + 1] = 0
-                buf[off + 2] = 100
-            }
         }
     }
     for _, p := range loop {
         off := p.i*len(lines[0])*4 + p.j*4
 
-        buf[off + 0] = 255
-        buf[off + 1] = 0
+        buf[off + 0] = 0
+        buf[off + 1] = 255
         buf[off + 2] = 0
+
+
+        // switch lines[p.i][p.j] {
+        // case 'F':
+        // buf[off + 0] = 255
+        // buf[off + 1] = 100
+        // buf[off + 2] = 0
+        // case 'J':
+        // buf[off + 0] = 100
+        // buf[off + 1] = 255
+        // buf[off + 2] = 100
+        // case 'L':
+        // buf[off + 0] = 100
+        // buf[off + 1] = 100
+        // buf[off + 2] = 255
+        // case '7':
+        // buf[off + 0] = 255
+        // buf[off + 1] = 100
+        // buf[off + 2] = 255
+        // case '|':
+        // buf[off + 0] = 255
+        // buf[off + 1] = 255
+        // buf[off + 2] = 100
+        // case '-':
+        // buf[off + 0] = 100
+        // buf[off + 1] = 255
+        // buf[off + 2] = 255
+        //
+        // }
 
     }
     for _, p := range innerTiles {
         off := p.i*len(lines[0])*4 + p.j*4
 
-        buf[off + 0] = 0
-        buf[off + 1] = 255
+        buf[off + 0] = 255
+        buf[off + 1] = 0
         buf[off + 2] = 0
 
     }
