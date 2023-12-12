@@ -80,21 +80,23 @@ func main() {
             k := len(nums)-1
             valid := true
 
-    // 1 dentro 0 0 -> fora
-    // 2 dentro 0 >1 -> nao valido
-    // 3 dentro 1 0 -> nao valido
-    // 4 dentro 1 >1 -> continua
-    // 5 fora 0 0 -> panic
-    // 6 fora 0 >1 -> continua
-    // 7 fora 1 0 -> panic
-    // 8 fora 1 >1 -> dentro
-    // 9 terminar >1 -> nao valido
+            // 1 dentro 0 0 -> fora
+            // 2 dentro 0 >1 -> nao valido
+            // 3 dentro 1 0 -> nao valido
+            // 4 dentro 1 >1 -> continua
+            // 5 fora 0 0 -> panic
+            // 6 fora 0 >1 -> continua
+            // 7 fora 1 0 -> panic
+            // 8 fora 1 >1 -> dentro
+            // 9 terminar >1 -> nao valido
 
             for j := range s.springs {
                 a := (test >> j) & 1
 
+                // fmt.Println(j, k, nums, inside, a)
                 if inside && a == 0 && nums[k] == 0 {
                     inside = false
+                    k--
 
                 } else if inside && a == 0 && nums[k] > 0 {
                     valid = false
@@ -105,7 +107,7 @@ func main() {
                     break
 
                 } else if inside && a == 1 && nums[k] > 0 {
-                    nums[k]--
+                    //
 
                 } else if !inside && a == 0 && nums[k] > 0 {
                     //
@@ -113,9 +115,16 @@ func main() {
                 } else if !inside && a == 1 && nums[k] == 0 {
                     panic(7)
 
-                } else if !inside && a == 1 && nums[k] > 1 {
+                } else if !inside && a == 1 && nums[k] > 0 {
                     inside = true
                 }
+
+                // fmt.Println(j, k, nums, inside, a)
+                if inside {
+                    nums[k]--
+                }
+                // fmt.Println(j, k, nums, inside, a)
+                // fmt.Println()
 
 
                 // if nums[k] == 0 && a == 1 {
@@ -133,16 +142,14 @@ func main() {
                 //     inside = true
                 // }
                 //
-                // if inside {
-                //     nums[k]--
-                // }
 
             }
-            if test == 87 {
-                fmt.Println(nums, k)
-            }
+
+            // if 87 == test {
+            //     fmt.Println(k, nums)
+            // }
+            // fmt.Println()
             if k == 0 && nums[k] == 0 && valid {
-                fmt.Println(test)
                 count++
             }
         }
