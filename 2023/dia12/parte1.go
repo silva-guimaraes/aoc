@@ -12,6 +12,8 @@ import (
 	// "strings"
 )
 
+// ESSE FOI O BRUTEFORCE MAIS COMPLICADO QUE EU JA ESCREVI
+
 type springs struct {
     onMask, offMask int
     springs string
@@ -19,7 +21,7 @@ type springs struct {
 }
 
 func main() {
-    file, err := os.ReadFile("teste.txt")
+    file, err := os.ReadFile("input.txt")
     if err != nil {
         panic(err)
     }
@@ -43,10 +45,6 @@ func main() {
         }
 
         for _, s := range current.springs {
-            // s := current.springs[i]
-            // 1xx10xx000x11
-            // 0111011000111 and
-            // 1001000000011 or 
             current.onMask <<= 1
             current.offMask <<= 1
             if s != '.' {
@@ -59,10 +57,10 @@ func main() {
         input = append(input, current)
     }
 
-    fmt.Println(input)
+    // fmt.Println(input)
 
     count := 0
-    input = input[4:5]
+    // input = input[1:2]
 
     for _, s := range input {
         lim := int(math.Pow(2, float64(len(s.springs))))
@@ -78,9 +76,9 @@ func main() {
             }
             last[test] = true
 
-            // if test != 2318 { continue }
+            // if test != 180030 { continue }
 
-            fmt.Println(test, i, s.onMask, s.offMask)
+            // fmt.Println(test, i, s.onMask, s.offMask)
 
             inside := false
             var nums []int
@@ -101,9 +99,9 @@ func main() {
             for j := range s.springs {
                 a := (test >> j) & 1
                 b := (test >> j)
-                // if k == -1 {
-                //     break
-                // }
+                if k == -1 {
+                    break
+                }
 
                 // fmt.Println(j, k, nums, inside, a)
                 if b == 0 {
@@ -134,33 +132,17 @@ func main() {
                     inside = true
                 }
 
-                // fmt.Println(j, k, nums, inside, a)
                 if inside {
                     nums[k]--
                 }
-                // fmt.Println(j, k, nums, inside, a)
-                // fmt.Println()
 
-
-                // if nums[k] == 0 && a == 1 {
-                //     break
-                // }
-                //
-                // if inside && nums[k] > 0 && a == 0 {
-                //     break
-                //
-                // } else if inside && nums[k] == 0 && a == 0 {
-                //     k--
-                //     inside = false
-                //
-                // } else if a == 1 && !inside {
-                //     inside = true
-                // }
-                //
 
             }
 
             // fmt.Println()
+            if k < 0 {
+                continue
+            }
             if k == 0 && nums[k] == 0 && valid {
                 count++
             }
@@ -168,7 +150,3 @@ func main() {
     }
     fmt.Println(count)
 }
-
-// ???.### 1,1,3
-// xxx0111
-// .??..??...?##. 1,1,3
