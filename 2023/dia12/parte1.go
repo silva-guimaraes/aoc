@@ -62,7 +62,7 @@ func main() {
     fmt.Println(input)
 
     count := 0
-    input = input[:1]
+    input = input[1:2]
 
     for _, s := range input {
         lim := int(math.Pow(2, float64(len(s.springs))))
