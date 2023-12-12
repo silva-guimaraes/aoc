@@ -55,7 +55,6 @@ func main() {
             }
         }
     }
-
     var rowdiff []int
     for i := 1; i < len(rows); i++ {
         rowdiff = append(rowdiff, rows[i] - rows[i-1])
