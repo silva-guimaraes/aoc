@@ -62,16 +62,24 @@ func main() {
     fmt.Println(input)
 
     count := 0
-    input = input[1:2]
+    input = input[4:5]
 
     for _, s := range input {
         lim := int(math.Pow(2, float64(len(s.springs))))
         // lim = 1
-        last := 0
+        // last := 0
+        last := make(map[int]bool)
         for i := 0; i < lim; i++ {
             test := (i | s.onMask) & s.offMask
-            if test == last { continue }
-            last = test
+
+            _, exists := last[test]
+            if exists { 
+                continue 
+            }
+            last[test] = true
+
+            // if test != 2318 { continue }
+
             fmt.Println(test, i, s.onMask, s.offMask)
 
             inside := false
@@ -92,9 +100,16 @@ func main() {
 
             for j := range s.springs {
                 a := (test >> j) & 1
+                b := (test >> j)
+                // if k == -1 {
+                //     break
+                // }
 
                 // fmt.Println(j, k, nums, inside, a)
-                if inside && a == 0 && nums[k] == 0 {
+                if b == 0 {
+                    break
+
+                } else if inside && a == 0 && nums[k] == 0 {
                     inside = false
                     k--
 
@@ -145,9 +160,6 @@ func main() {
 
             }
 
-            // if 87 == test {
-            //     fmt.Println(k, nums)
-            // }
             // fmt.Println()
             if k == 0 && nums[k] == 0 && valid {
                 count++
