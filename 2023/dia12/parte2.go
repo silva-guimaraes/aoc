@@ -65,9 +65,9 @@ func main() {
         if l == "" { continue }
         seq := strings.Split(l, " ")
 
-        springs := seq[0]
-        // springs := seq[0] + "?" + seq[0] + "?" + seq[0] + "?" + 
-        // seq[0] + "?" + seq[0]
+        // springs := seq[0]
+        springs := seq[0] + "?" + seq[0] + "?" + seq[0] + "?" + 
+        seq[0] + "?" + seq[0]
         numbers := strings.Split(seq[1], ",")
 
         var temp []byte
@@ -82,15 +82,15 @@ func main() {
 
         var nums []byte
         nums = append(nums, temp...)
-        // nums = append(nums, temp...)
-        // nums = append(nums, temp...)
-        // nums = append(nums, temp...)
-        // nums = append(nums, temp...)
+        nums = append(nums, temp...)
+        nums = append(nums, temp...)
+        nums = append(nums, temp...)
+        nums = append(nums, temp...)
 
         sum += recur([]byte(springs), nums, cache)
     }
 
-    fmt.Println(cache)
+    // fmt.Println(cache)
 
     fmt.Println(sum)
 }
