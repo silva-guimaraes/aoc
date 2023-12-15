@@ -40,10 +40,14 @@ func sendFrame(ffmpeg *bufio.Writer, buf frame) {
 }
 
 func getFrame(lines [][]byte, follow pos) frame {
+
     buf := make([][]pixel, len(lines))
     for i := range buf {
         buf[i] = make([]pixel, len(lines[0]))
     }
+
+    dist := pos{follow.i - len(lines)/2, follow.j - len(lines[0])/2}
+
     for i := range buf {
         for j := range buf[i] {
             buf[i][j] = pixel{200, 200, 200, 255}
@@ -51,7 +55,14 @@ func getFrame(lines [][]byte, follow pos) frame {
     }
 
     for i := range lines {
-        for j, c := range lines[i] {
+        for j := range lines[i] {
+            if i + dist.i >= len(lines) || i + dist.i < 0 || 
+            j + dist.j >= len(lines[0]) || j + dist.j < 0 {
+                continue
+            }
+
+            c := lines[i+dist.i][j+dist.j]
+
             if c == '#' {
                 buf[i][j] = pixel{0, 0, 0, 255}
             } else if c == 'O' {
@@ -60,7 +71,7 @@ func getFrame(lines [][]byte, follow pos) frame {
         }
     }
 
-    buf[follow.i][follow.j] = pixel{255, 0, 0, 255}
+    buf[len(lines)/2][len(lines[0])/2] = pixel{255, 0, 0, 255}
     return buf
 }
 
@@ -86,9 +97,11 @@ func main() {
         "-f", "rawvideo",
         "-pix_fmt", "rgba",
         "-s", fmt.Sprintf("%dx%d", len(lines[0]), len(lines)),
+        "-itsscale", "0.05",
         "-i", "-", 
+        // "-filter:v", "setpts=PTS/12000",
         // "-vf", "scale=600:-1",
-        "-vf", "scale=600:-1,tpad=stop_mode=clone:stop_duration=2",
+        "-vf", "scale=600:-1",
         "-r", "60",
         "-sws_flags", "neighbor",
         "foobar.mp4",
@@ -122,7 +135,7 @@ func main() {
     
     follow := rocks[r.Int31n(int32(len(rocks)))]
 
-    for times := 0; times < 10; times++ {
+    for times := 0; times < 300; times++ {
 
         var join []string
         for i := range lines {

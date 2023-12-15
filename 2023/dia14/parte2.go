@@ -158,7 +158,7 @@ func main() {
     b := keys[:len(keys)-1]
     idx := slices.Index(b, a)
 
-    // ralei aqui mais do que na parte um inteira
+    // ralei mais aqui do que na parte um inteira
     lines = cache[keys[idx + ((1000000000 - idx) % (len(keys) - idx - 1))]]
 
     sum := 0
