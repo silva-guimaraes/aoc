@@ -21,7 +21,7 @@ func main() {
 
     words := strings.Split(strings.TrimSpace(string(file)), ",")
 
-    boxes := make(map[int][]lens)
+    boxes := make([][]lens, 256)
 
     for _, w := range words {
 
@@ -52,7 +52,6 @@ func main() {
         }
         if idx > -1 && focalLength == 0 {
             boxes[hash] = slices.Delete(boxes[hash], idx, idx+1)
-            continue
 
         } else if idx > -1 {
             slices.Replace(boxes[hash], idx, idx+1, lens)
