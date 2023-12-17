@@ -119,6 +119,7 @@ func main() {
 
     grid := strings.Split(strings.TrimSpace(string(file)), "\n")
 
+    // cache := map[beam]int
 
     countMax := 0
     for j := range grid[0] {
