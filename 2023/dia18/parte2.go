@@ -64,6 +64,15 @@ func main() {
         sum += cubes[i][0] * cubes[i+1][1] - cubes[i+1][0] * cubes[i][1]
     }
 
-    // não faço ideia o do porque desse +1
+    // não faço ideia o do porque desse +1. isso da a resposta correta.
     fmt.Println(sum / 2 + 1)
+
+    // não tinha percebido isso antes e até aogra não sei o porque a resposta foi 
+    // a correta mas a soma do perimetro também ta sendo dividia por 2 do jeito que
+    // eu fiz.
+    // normalmente não faria sentido isso na minha mente, a formula de shoelace calcula
+    // a area de um polígono, e o problema pedia a area + perimetro. mesma assim o que
+    // eu acabei fazendo foi (area + perimetro) / 2.
+    // se eu sem querer tivesse percebido isso eu teria ficado mais uma hora coçando
+    // a cabeça procurando algum bug.
 }
