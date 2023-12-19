@@ -46,18 +46,7 @@ func main() {
 
     }
 
-    minX, minY := 0, 0
-    for _, c := range cubes {
-        minX = min(minX, c[0])
-        minY = min(minY, c[1])
-    }
-
     slices.Reverse(cubes)
-
-    for i := range cubes {
-        cubes[i][0] -= minX
-        cubes[i][1] -= minY
-    }
 
     // shoelace formula
     for i := 0; i < len(cubes)-1; i++ {
