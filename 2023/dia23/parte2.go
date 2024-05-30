@@ -1,11 +1,7 @@
 package main
 
 import (
-	// "cmp"
 	"fmt"
-	// "math"
-
-	// "math"
 	"os"
 	"slices"
 	"strings"

@@ -12,6 +12,7 @@ input = open('input.txt').read().strip().split('\n')
 grid = [[int(b) for b in a] for a in input]
 
 start, end = (0, 0), (len(grid[0])-1, len(grid)-1)
+# o primeiro elemento da tupla é quem decide a prioridade
 heap = [(0, start, 0, (1, 0), (0, 0))]
 visited = set()
 
