@@ -50,7 +50,7 @@ part1()
 
 pyxel.init(256, 256)
 
-# todas as fontes generozamente doadas por este repositório:
+# todas as fontes generosamente doadas por este repositório:
 # https://github.com/olikraus/u8g2/wiki/fntgrpu8g#emoticons21
 five_by_eight = pyxel.Font('./5x8.bdf')
 freedom25 = pyxel.Font('./freedoomr25n.bdf')
