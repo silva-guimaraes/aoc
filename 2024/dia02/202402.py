@@ -14,18 +14,23 @@ def safe(i):
         return True
     return False
 
+# todas as sequências seguras estão na segunda metadade do input
+# logo basta parar na primeira encontrada.
+# seria possível encontrar o número com menos comparações ainda
+# utilizando binary search.
 def part1():
-    sum = 0
-    for i in input:
-        if safe(i):
-            sum += 1
-
-    print(sum)
+    for i, a in enumerate(input):
+        if safe(a):
+            print(len(input) - i)
+            return
 
 
 def part2():
     sum = 0
     for a in input:
+        if safe(a):
+            sum += 1
+            continue
         for i in range(len(a)):
             b = a[:]
             del b[i]
