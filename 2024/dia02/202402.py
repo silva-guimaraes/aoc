@@ -14,15 +14,26 @@ def safe(i):
         return True
     return False
 
-# todas as sequências seguras estão na segunda metadade do input
-# logo basta parar na primeira encontrada.
-# seria possível encontrar o número com menos comparações ainda
-# utilizando binary search.
+# todas as sequências seguras estão na segunda metadade do input,
+# logo, basta parar na primeira encontrada.
 def part1():
     for i, a in enumerate(input):
         if safe(a):
             print(len(input) - i)
             return
+
+# pesquisa binária aqui também funciona
+def part1binary():
+    low, high = 0, len(input)
+    while low < high:
+        mid = low + int((high - low) / 2)
+        if mid == low:
+            break
+        if safe(input[mid]):
+            high = mid
+        else:
+            low = mid
+    print(len(input) - high)
 
 
 def part2():
@@ -41,4 +52,5 @@ def part2():
 
 
 part1()
+part1binary()
 part2()
