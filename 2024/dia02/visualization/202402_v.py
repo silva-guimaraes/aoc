@@ -6,7 +6,7 @@ from itertools import pairwise
 input = open('../02.txt', 'r').read().strip().split('\n')
 input = [list(map(int, i.split())) for i in input]
 
-results: List = []
+results: List = [{ 'safe': False, 'input': [], 'diff': [], 'asc': [], 'dsc': []}] * 31
 
 def safe(i: List[int]) -> tuple[bool, list[bool], list[bool], list[bool]]:
     a = list(map(lambda x: x[1] - x[0], pairwise(i)))

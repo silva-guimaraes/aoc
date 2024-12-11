@@ -45,8 +45,6 @@ def part2():
 
         before_after[b].append(a)
 
-    print(before_after)
-
     for update in updates:
         order = {u: i for i, u in enumerate(update)}
         
@@ -72,7 +70,62 @@ def part2():
     print(sum(map(middle_page, incorrect)))
 
 
+def part12():
+
+    before_after: Dict[int, List[int]] = {}
+    for b, a in rules:
+        if not b in before_after:
+            before_after[b] = []
+        before_after[b].append(a)
+
+    incorrect = []
+    correct = []
+    for update in updates:
+        order = {u: i for i, u in enumerate(update)}
+        
+        in_order = True
+        for before, after in rules:
+            if not before in update or not after in update:
+                continue
+
+            if order[before] > order[after]:
+                in_order = False
+                break
+        if in_order:
+            correct.append(update)
+        else:
+            incorrect.append(update)
+    print(sum(map(middle_page, correct)))
+
+    def cmp(a: int, b: int):
+        if not a in before_after:
+            return 0
+        return -1 if b in before_after[a] else 1
+
+    for i in incorrect:
+        i.sort(key=functools.cmp_to_key(cmp))
+
+    print(sum(map(middle_page, incorrect)))
+
+
+# def part2():
+#
+#
+#     for update in updates:
+#         order = {u: i for i, u in enumerate(update)}
+#         
+#         in_order = True
+#         for b, a in rules:
+#             if not b in update or not a in update:
+#                 continue
+#
+#             if order[b] > order[a]:
+#                 in_order = False
+#                 break
+
 
 part1()
 part2()
+
+part12()
 
