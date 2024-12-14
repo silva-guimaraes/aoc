@@ -24,7 +24,5 @@ def part1():
 def part2():
     print(sum(map(lambda x: recur(x, 75), input)))
 
-
-
 part1()
 part2()
