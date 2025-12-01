@@ -1,19 +1,14 @@
-import functools
+from functools import cache
 
-patterns, towels = inpurt = open('19.txt', 'r').read().strip().split('\n\n')
-patterns = list(map(lambda x: x.strip(), patterns.split(',')))
-
+patterns, towels = open('19.txt').read().strip().split('\n\n')
+patterns = patterns.split(', ')
 towels = towels.split()
 
-@functools.cache
+@cache
 def recur(l):
-    if not l:
-        return 1
-    s = 0
-    for p in patterns:
-        if p == l[:len(p)]:
-            s += recur(l[len(p):])
-    return s
+    return 1 if not l else sum(recur(l[len(p):]) for p in patterns if p == l[:len(p)])
 
-print(sum(recur(t) > 0 for t in towels))
-print(sum(recur(t) for t in towels))
+x = list(map(recur, towels))
+
+print(sum(i > 0 for i in x))
+print(sum(x))
