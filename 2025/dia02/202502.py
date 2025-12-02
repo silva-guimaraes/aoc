@@ -1,9 +1,7 @@
 
-input = open('02.txt', 'r').read().strip().split(',')
-
 pt1, pt2 = 0, 0
 
-for i in input:
+for i in open('02.txt', 'r').read().strip().split(','):
     x, y = i.split('-')
     for j in range(int(x), int(y)+1):
         s = str(j)
