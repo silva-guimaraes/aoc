@@ -1,35 +1,20 @@
 
 input = open('01.txt', 'r').read().strip().split()
 
-current = 50
-zeros = 0 
+current1, current2 = 50, 50
+pt1, pt2 = 0, 0
 
 for i in input:
-    direction = i[0]
+    direction = 1 if i[0] == 'R' else -1
     number = int(i [1:])
-    if direction == 'R':
-        current += number
-    elif direction == 'L':
-        current -= number
-    current %= 100
-    if current == 0:
-        zeros += 1
-
-print(zeros)
-
-current = 50
-zeros = 0
-
-for i in input:
-    direction = i[0]
-    number = int(i [1:])
+    current1 = (current1 + direction * number) % 100
+    if current1 == 0:
+        pt1 += 1
     for n in range(number):
-        if direction == 'R':
-            current += 1
-        elif direction == 'L':
-            current -= 1
-        current %= 100
-        if current == 0:
-            zeros += 1
+        current2 = (current2 + direction * 1) % 100
+        if current2 == 0:
+            pt2 += 1
 
-print(zeros)
+print(pt1)
+print(pt2)
+
