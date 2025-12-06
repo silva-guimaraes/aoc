@@ -22,26 +22,36 @@ pt2 = 0
 while True:
     s = len(rang2)
     for a, b in itertools.combinations(rang2, 2):
-        if a[0] > b[0]:
-            a, b = b, a
-        x1, y1 = a
-        x2, y2 = b
-        assert x1 < y1
-        assert x2 < y2
-        if x1 < x2 and y1 > y2:
+        ax, ay = a
+        bx, by = b
+        if a == b:
             rang2.remove(b)
-            break
-        elif x1 < y2 and y1 > x2:
+        # A contem B
+        elif ax <= bx and ay >= by:
+            rang2.remove(b)
+        # B contem A
+        elif bx <= ax and by >= ay:
+            rang2.remove(a)
+        # A antes
+        elif ax < bx and ay >= bx:
             rang2.remove(a)
             rang2.remove(b)
-            rang2.append((x1, y2))
-            break
+            rang2.append((ax, by))
+        elif ax < bx and ay < bx:
+            continue
+        # B antes
+        elif bx < ax and by >= ax:
+            rang2.remove(a)
+            rang2.remove(b)
+            rang2.append((bx, ay))
+        elif bx < ax and by < ax:
+            continue
+        else:
+            continue
+        break
     if len(rang2) == s:
         break
 
 pt2 += sum([b - a + 1 for a, b in rang2])
 
-assert(all([(b - a + 1) >= 0 for a, b in rang2]))
 print(pt2)
-
-
