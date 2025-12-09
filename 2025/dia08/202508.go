@@ -11,8 +11,8 @@ import (
 )
 
 type box struct {
-	x, y, z int
 	nodes   []int16
+	x, y, z int
 }
 
 type pair struct {
@@ -41,28 +41,27 @@ func main() {
 		x, _ := strconv.Atoi(coords[0])
 		y, _ := strconv.Atoi(coords[1])
 		z, _ := strconv.Atoi(coords[2])
-		boxes = append(boxes, box{x, y, z, nil})
+		boxes = append(boxes, box{nil, x, y, z})
 	}
 	var pairs []pair
 	for i := range boxes {
-		for j := range boxes {
-			if i == j {
-				continue
-			}
-			pairs = append(pairs, pair{euclidean(boxes[i], boxes[j]), int16(i), int16(j)})
+		for j := i + 1; j < len(boxes); j++ {
+			distance := euclidean(boxes[i], boxes[j])
+			pairs = append(pairs, pair{distance, int16(i), int16(j)})
 		}
 	}
-	slices.SortFunc(pairs, func(a, b pair) int {
-		return cmp.Compare(a.distance, b.distance)
-	})
-	for _, pair := range pairs {
+	slices.SortFunc(pairs, func(a, b pair) int { return cmp.Compare(a.distance, b.distance) })
+	for i, connected := 0, 0; connected < 8; i++ {
+		pair := pairs[i]
+		fmt.Println("connected:", boxes[pair.a], boxes[pair.b])
 		boxes[pair.a].nodes = append(boxes[pair.a].nodes, pair.b)
 		boxes[pair.b].nodes = append(boxes[pair.b].nodes, pair.a)
+		connected += 2
 	}
 	var visited = make(map[int]bool)
 	var circuits = []int{}
 	for i := range boxes {
-		if _, ok := visited[i]; ok || len(boxes[i].nodes) == 0 {
+		if _, ok := visited[i]; ok {
 			continue
 		}
 		size := 0
@@ -83,9 +82,10 @@ func main() {
 		circuits = append(circuits, size)
 	}
 	slices.Sort(circuits)
-	slices.Reverse(circuits)
+	slices.SortFunc(circuits, func(a, b int) int {
+		return -cmp.Compare(a, b)
+	})
 	fmt.Println(circuits)
 	pt1 := circuits[0] * circuits[1] * circuits[2]
-	fmt.Println(circuits)
 	fmt.Println(pt1)
 }
